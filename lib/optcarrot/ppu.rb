@@ -62,6 +62,7 @@ module Optcarrot
       @conf = conf
       @cpu = cpu
       @palette = palette
+      @destroy_fiber = false
 
       if @conf.load_ppu
         eval(File.read(@conf.load_ppu))
@@ -900,6 +901,12 @@ module Optcarrot
       Fiber.yield if @hclk_target <= @hclk
     end
 
+    def dispose
+      @destroy_fiber = true
+      @fiber.resume until !@fiber.alive?
+      puts "Fiber destroyed"
+    end
+
     ### main-loop structure
     #
     # # wait for boot
@@ -936,6 +943,7 @@ module Optcarrot
       wait_frame
 
       while true
+        return if @destroy_fiber
         # pre-render scanline
 
         341.step(589, 8) do

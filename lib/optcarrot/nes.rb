@@ -69,6 +69,7 @@ module Optcarrot
       @audio.dispose
       @input.dispose
       @rom.save_battery
+      @ppu.dispose
     end
 
     def run
